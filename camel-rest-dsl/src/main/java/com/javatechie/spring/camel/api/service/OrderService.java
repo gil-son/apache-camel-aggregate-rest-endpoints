@@ -29,4 +29,9 @@ public class OrderService {
 			return this.list;
 		}
 
+		
+		public Order addOrder(Order order) {
+			list.add(order);
+			return order;
+		}
 }
