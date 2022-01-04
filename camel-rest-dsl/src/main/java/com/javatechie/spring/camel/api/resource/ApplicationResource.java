@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 
 import com.javatechie.spring.camel.api.dto.Order;
+import com.javatechie.spring.camel.api.processor.DuplicateValueOrderProcessor;
 import com.javatechie.spring.camel.api.processor.OrderProcessor;
 import com.javatechie.spring.camel.api.service.OrderService;
 
@@ -18,7 +19,10 @@ public class ApplicationResource extends RouteBuilder{
 	private OrderService service;
 	
 	@BeanInject
-	private OrderProcessor processor;
+	private OrderProcessor orderProcessor;
+	
+	@BeanInject
+	private DuplicateValueOrderProcessor duplicateValueOrderProcessor;
 	
 	@Override
 	public void configure() throws Exception {
@@ -29,21 +33,20 @@ public class ApplicationResource extends RouteBuilder{
 			.host("localhost")
 			.bindingMode(RestBindingMode.json);
 		
+		
 		rest()
 		.get("/hello-world")
 		.produces(MediaType.APPLICATION_JSON_VALUE)
 		.route()
 		.setBody(constant("Welcome to java techie"))
-		.endRest();;
-		
+		.endRest();
 		
 		rest()
 		.get("/orders")
 		.produces(MediaType.APPLICATION_JSON_VALUE)
 		.route()
 		.setBody(() -> service.getOrders())
-		.endRest();;
-		
+		.endRest();
 		
 		rest()
 		.post("/order")
@@ -51,10 +54,17 @@ public class ApplicationResource extends RouteBuilder{
 		.type(Order.class)
 		.outType(Order.class)
 		.route()
-		.process(processor)
+		.process(orderProcessor)
 		.endRest();
 		
-		
+		rest()
+		.post("/duplicate-value")
+		.consumes(MediaType.APPLICATION_JSON_VALUE)
+		.type(Order.class)
+		.outType(Order.class)
+		.route()
+		.process(duplicateValueOrderProcessor)
+		.endRest();
 		
 	}
 

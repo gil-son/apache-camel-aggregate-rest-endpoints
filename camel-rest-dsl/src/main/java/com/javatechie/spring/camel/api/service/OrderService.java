@@ -34,4 +34,17 @@ public class OrderService {
 			list.add(order);
 			return order;
 		}
+		
+		
+		public Order DuplicateValue(Order order) {
+			Order o = order;
+			o.setPrice(order.getPrice()*2);
+			
+			list.add(o);
+			
+			return o;
+			
+		}
+		
+		
 }
